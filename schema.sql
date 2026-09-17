@@ -11,3 +11,12 @@ CREATE TABLE categoria (
     id INTEGER PRIMARY KEY NOT NULL,
     nome TEXT NOT NULL UNIQUE
 );
+
+CREATE TABLE transacao (
+    id INTEGER PRIMARY KEY NOT NULL,
+    valor INTEGER NOT NULL,
+    data TEXT NOT NULL ,
+    tipo TEXT NOT NULL CHECK ( tipo in ('receita', 'despesa')),
+    usuario_id INTEGER NOT NULL REFERENCES usuario(id),
+    categoria_id INTEGER NOT NULL REFERENCES categoria(id)
+);
