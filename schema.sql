@@ -37,3 +37,11 @@ CREATE TABLE perfil_financeiro (
     renda_periodo TEXT NOT NULL,
     UNIQUE (usuario_id, renda_periodo)
 );
+
+CREATE TABLE orcamento (
+    id INTEGER PRIMARY KEY NOT NULL,
+    usuario_id INTEGER NOT NULL REFERENCES usuario(id),
+    categoria_id INTEGER NOT NULL REFERENCES categoria(id),
+    valor_limite INTEGER NOT NULL,
+    UNIQUE (usuario_id, categoria_id)
+);
