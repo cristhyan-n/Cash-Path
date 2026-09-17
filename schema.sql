@@ -29,3 +29,11 @@ CREATE TABLE meta (
     tipo TEXT NOT NULL CHECK ( tipo in ('economizar', 'investir')),
     usuario_id INTEGER NOT NULL REFERENCES usuario(id)
 );
+
+CREATE TABLE perfil_financeiro (
+    id INTEGER PRIMARY KEY NOT NULL,
+    usuario_id INTEGER NOT NULL REFERENCES usuario(id),
+    valor_renda INTEGER NOT NULL,
+    renda_periodo TEXT NOT NULL,
+    UNIQUE (usuario_id, renda_periodo)
+);
