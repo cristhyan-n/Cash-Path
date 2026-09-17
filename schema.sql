@@ -7,3 +7,7 @@ CREATE TABLE usuario (
     CHECK (role in ('usuario', 'admin'))
 );
 
+CREATE TABLE categoria (
+    id INTEGER PRIMARY KEY NOT NULL,
+    nome TEXT NOT NULL UNIQUE
+);
