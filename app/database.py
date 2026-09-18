@@ -7,3 +7,11 @@ def get_connection():
     # Habilitando validação de Foreign Key
     conexao.execute("PRAGMA foreign_keys = ON")
     return conexao
+
+
+def get_db_connection():
+    recurso = get_connection()
+    try:
+        yield recurso
+    finally:
+        recurso.close()
