@@ -1,3 +1,6 @@
 import bcrypt
 
-hash_gerado = bcrypt.hashpw("senha123".encode(), bcrypt.gensalt())
+
+def hash_password(senha: str) -> str:
+    hash_gerado = bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode()
+    return hash_gerado

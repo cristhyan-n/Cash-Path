@@ -1,8 +1,5 @@
-from fastapi import FastAPI  # type: ignore[import-not-found]
+from fastapi import FastAPI
+from .routers.usuarios import router as usuarios_router
 
 app = FastAPI()
-
-
-@app.get("/")
-def nome_da_funcao():
-    return {"mensagem": "algo aqui"}
+app.include_router(usuarios_router)
