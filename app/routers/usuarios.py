@@ -2,9 +2,9 @@ import sqlite3
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException
 
-from ..security import hash_password
+from ..security import generate_jwt_token, hash_password, verify_password
 from ..database import get_db_connection
-from ..schemas import CadastroUsuario, UsuarioResponse  # type: ignore[import-not-found]
+from ..schemas import CadastroUsuario, TokenResponse, UsuarioLogin, UsuarioResponse  # type: ignore[import-not-found]
 
 router = APIRouter()
 
@@ -28,3 +28,23 @@ def criar_usuario(dados_usuario: CadastroUsuario, conexao=Depends(get_db_connect
         raise HTTPException(status_code=400, detail="Email já cadastrado.")
 
     return {"id": novo_id, "nome": dados_usuario.nome, "email": dados_usuario.email}
+
+
+@router.post("/usuarios/login", response_model=TokenResponse)
+def login_usuario(dados_login: UsuarioLogin, conexao=Depends(get_db_connection)):
+    cursor = conexao.cursor()
+    cursor.execute(
+        "SELECT id, senha FROM usuario WHERE email = ?", (dados_login.email,)
+    )
+    resultado = cursor.fetchone()
+
+    if not resultado:
+        raise HTTPException(status_code=401, detail="E-mail ou senha inválidos")
+
+    usuario_id, hash_senha = resultado
+
+    if not verify_password(dados_login.senha, hash_senha):
+        raise HTTPException(status_code=401, detail="E-mail ou senha inválidos")
+
+    token = generate_jwt_token(usuario_id)
+    return {"access_token": token, "token_type": "bearer"}

@@ -14,3 +14,13 @@ class UsuarioResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UsuarioLogin(BaseModel):
+    email: str
+    senha: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
