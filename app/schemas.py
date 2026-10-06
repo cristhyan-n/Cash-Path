@@ -24,3 +24,15 @@ class UsuarioLogin(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class CategoriaResponse(BaseModel):
+    id: int
+    nome: str
+
+    class Config:
+        from_attributes = True
+
+
+class CategoriaCreate(BaseModel):
+    nome: str
