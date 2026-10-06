@@ -56,3 +56,51 @@ class TransacaoResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class MetaCreate(BaseModel):
+    tipo: Literal["economizar", "investir"]
+    valor_alvo: int
+    data_inicio: str
+
+
+class MetaResponse(BaseModel):
+    id: int
+    tipo: str
+    valor_alvo: int
+    data_inicio: str
+    status: str
+    usuario_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class PerfilFinanceiroCreate(BaseModel):
+    valor_renda: int
+    renda_periodo: str
+
+
+class PerfilFinanceiroResponse(BaseModel):
+    id: int
+    valor_renda: int
+    renda_periodo: str
+    usuario_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class OrcamentoCreate(BaseModel):
+    categoria_id: int
+    valor_limite: int
+
+
+class OrcamentoResponse(BaseModel):
+    id: int
+    categoria_id: int
+    valor_limite: int
+    usuario_id: int
+
+    class Config:
+        from_attributes = True
