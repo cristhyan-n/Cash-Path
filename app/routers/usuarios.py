@@ -2,7 +2,12 @@ import sqlite3
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException
 
-from ..security import generate_jwt_token, hash_password, verify_password
+from ..security import (
+    generate_jwt_token,
+    hash_password,
+    verify_jwt_token,
+    verify_password,
+)
 from ..database import get_db_connection
 from ..schemas import CadastroUsuario, TokenResponse, UsuarioLogin, UsuarioResponse  # type: ignore[import-not-found]
 
@@ -48,3 +53,17 @@ def login_usuario(dados_login: UsuarioLogin, conexao=Depends(get_db_connection))
 
     token = generate_jwt_token(usuario_id)
     return {"access_token": token, "token_type": "bearer"}
+
+
+@router.get("/usuarios/me", response_model=UsuarioResponse)
+def obter_usuario_atual(
+    usuario_id: int = Depends(verify_jwt_token), conexao=Depends(get_db_connection)
+):
+    cursor = conexao.cursor()
+    cursor.execute("SELECT id, nome, email FROM usuario WHERE id = ?", (usuario_id,))
+    resultado = cursor.fetchone()
+
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+
+    return {"id": resultado[0], "nome": resultado[1], "email": resultado[2]}
