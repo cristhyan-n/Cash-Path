@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Literal
 
 
 class CadastroUsuario(BaseModel):
@@ -36,3 +37,22 @@ class CategoriaResponse(BaseModel):
 
 class CategoriaCreate(BaseModel):
     nome: str
+
+
+class TransacaoCreate(BaseModel):
+    valor: int
+    data: str
+    tipo: Literal["receita", "despesa"]
+    categoria_id: int
+
+
+class TransacaoResponse(BaseModel):
+    id: int
+    valor: int
+    data: str
+    tipo: str
+    categoria_id: int
+    usuario_id: int
+
+    class Config:
+        from_attributes = True
