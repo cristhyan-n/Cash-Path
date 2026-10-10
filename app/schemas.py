@@ -113,3 +113,12 @@ class MetaProgressoResponse(BaseModel):
     valor_atual: int
     percentual_concluido: float
     status: str
+
+
+class AlertaOrcamentoResponse(BaseModel):
+    categoria_id: int
+    categoria_nome: str
+    valor_limite: int
+    valor_gasto: int
+    percentual_utilizado: float
+    status: Literal["ok", "atencao", "estourado"]

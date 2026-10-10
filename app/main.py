@@ -4,7 +4,7 @@ from .routers.categorias import router as categorias_router
 from .routers.transacoes import router as transacoes_router
 from .routers.metas import router as metas_router
 from .routers.perfil_financeiro import router as perfil_financeiro_router
-from .routers.orcamento import router as orcamentos_router
+from .routers.orcamentos import router as orcamentos_router
 
 app = FastAPI()
 app.include_router(usuarios_router)
