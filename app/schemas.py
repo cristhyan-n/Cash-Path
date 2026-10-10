@@ -122,3 +122,12 @@ class AlertaOrcamentoResponse(BaseModel):
     valor_gasto: int
     percentual_utilizado: float
     status: Literal["ok", "atencao", "estourado"]
+
+
+class ProjecaoResponse(BaseModel):
+    meses_considerados: int
+    fonte_renda: Literal["perfil_financeiro", "media_receitas"]
+    renda_base: int
+    media_despesas_mensais: int
+    saldo_projetado: int
+    valor_meta_sugerido: int
