@@ -1,6 +1,6 @@
 import sqlite3
 from fastapi import Depends, APIRouter, HTTPException
-from ..security import verify_jwt_token
+from ..permissions import get_admin_usuario_id
 from ..schemas import CategoriaCreate, CategoriaResponse
 from ..database import get_db_connection
 from typing import List
@@ -22,7 +22,7 @@ def listar_categorias(conexao=Depends(get_db_connection)):
 def criar_categoria(
     dados: CategoriaCreate,
     conexao=Depends(get_db_connection),
-    usuario_id: int = Depends(verify_jwt_token),
+    usuario_id: int = Depends(get_admin_usuario_id),
 ):
     cursor = conexao.cursor()
     try:
