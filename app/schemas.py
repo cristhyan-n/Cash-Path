@@ -131,3 +131,7 @@ class ProjecaoResponse(BaseModel):
     media_despesas_mensais: int
     saldo_projetado: int
     valor_meta_sugerido: int
+
+
+class GoogleLogin(BaseModel):
+    id_token: str

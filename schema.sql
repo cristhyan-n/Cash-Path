@@ -2,9 +2,12 @@ CREATE TABLE usuario (
     id INTEGER PRIMARY KEY NOT NULL,
     nome TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    senha TEXT NOT NULL,
+    senha TEXT,
     role TEXT NOT NULL DEFAULT 'usuario',
-    CHECK (role in ('usuario', 'admin'))
+    provider TEXT NOT NULL DEFAULT 'local',
+    CHECK (role IN ('usuario', 'admin')),
+    CHECK (provider IN ('local', 'google')),
+    CHECK (provider = 'google' OR senha IS NOT NULL)
 );
 
 CREATE TABLE categoria (
