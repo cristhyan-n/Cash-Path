@@ -104,3 +104,12 @@ class OrcamentoResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class MetaProgressoResponse(BaseModel):
+    meta_id: int
+    tipo: str
+    valor_alvo: int
+    valor_atual: int
+    percentual_concluido: float
+    status: str
