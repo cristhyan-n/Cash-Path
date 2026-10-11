@@ -20,10 +20,17 @@ def criar_transacao(
     try:
         cursor.execute(
             """
-            INSERT INTO transacao (valor, data, tipo, usuario_id, categoria_id)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO transacao (valor, data, tipo, descricao, usuario_id, categoria_id)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (dados.valor, dados.data, dados.tipo, usuario_id, dados.categoria_id),
+            (
+                dados.valor,
+                dados.data,
+                dados.tipo,
+                dados.descricao,
+                usuario_id,
+                dados.categoria_id,
+            ),
         )
         conexao.commit()
         novo_id = cursor.lastrowid
@@ -35,6 +42,7 @@ def criar_transacao(
         valor=dados.valor,
         data=dados.data,
         tipo=dados.tipo,
+        descricao=dados.descricao,
         categoria_id=dados.categoria_id,
         usuario_id=usuario_id,
     )
@@ -48,7 +56,7 @@ def listar_transacoes(
     cursor = conexao.cursor()
     cursor.execute(
         """
-        SELECT id, valor, data, tipo, usuario_id, categoria_id
+        SELECT id, valor, data, tipo, descricao, usuario_id, categoria_id
         FROM transacao
         WHERE usuario_id = ?
         """,
@@ -62,8 +70,9 @@ def listar_transacoes(
             valor=linha[1],
             data=linha[2],
             tipo=linha[3],
-            usuario_id=linha[4],
-            categoria_id=linha[5],
+            descricao=linha[4],
+            usuario_id=linha[5],
+            categoria_id=linha[6],
         )
         for linha in resultados
     ]

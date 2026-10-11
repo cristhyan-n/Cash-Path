@@ -1,0 +1,1 @@
+ALTER TABLE transacao ADD COLUMN descricao TEXT;

@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Literal
+from pydantic import BaseModel, Field
+from typing import Literal, Optional
 
 
 class CadastroUsuario(BaseModel):
@@ -40,9 +40,10 @@ class CategoriaCreate(BaseModel):
 
 
 class TransacaoCreate(BaseModel):
-    valor: int
+    valor: int = Field(gt=0)
     data: str
     tipo: Literal["receita", "despesa"]
+    descricao: Optional[str] = Field(default=None, max_length=100)
     categoria_id: int
 
 
@@ -51,6 +52,7 @@ class TransacaoResponse(BaseModel):
     valor: int
     data: str
     tipo: str
+    descricao: Optional[str] = None
     categoria_id: int
     usuario_id: int
 
