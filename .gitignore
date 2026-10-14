@@ -2,6 +2,7 @@
 venv/
 env/
 .venv/
+.venv-wsl/
 
 # Cache e bytecode do Python
 __pycache__/

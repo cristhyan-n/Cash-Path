@@ -17,6 +17,19 @@ def criar_transacao(
     conexao=Depends(get_db_connection),
 ):
     cursor = conexao.cursor()
+    cursor.execute(
+        """SELECT grupo FROM categoria WHERE id = ? AND ativa = 1
+        AND (usuario_id IS NULL OR usuario_id = ?)""",
+        (dados.categoria_id, usuario_id),
+    )
+    categoria = cursor.fetchone()
+    if not categoria:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada.")
+    grupo = categoria[0]
+    if dados.tipo == "despesa" and grupo not in ("necessidade", "desejo"):
+        raise HTTPException(status_code=400, detail="Despesas só podem usar categorias de necessidades ou desejos.")
+    if dados.tipo == "receita" and grupo != "receita":
+        raise HTTPException(status_code=400, detail="Receitas devem usar uma categoria de renda.")
     try:
         cursor.execute(
             """
@@ -76,3 +89,20 @@ def listar_transacoes(
         )
         for linha in resultados
     ]
+
+
+@router.delete("/transacoes/{transacao_id}")
+def excluir_transacao(
+    transacao_id: int,
+    usuario_id: int = Depends(verify_jwt_token),
+    conexao=Depends(get_db_connection),
+):
+    cursor = conexao.cursor()
+    cursor.execute(
+        "DELETE FROM transacao WHERE id = ? AND usuario_id = ?",
+        (transacao_id, usuario_id),
+    )
+    if cursor.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Transação não encontrada.")
+    conexao.commit()
+    return {"removida": True}
