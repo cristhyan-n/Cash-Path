@@ -266,6 +266,59 @@ def atualizar_usuario_atual(
     }
 
 
+@router.delete("/usuarios/me")
+def excluir_usuario_atual(
+    usuario_id: int = Depends(verify_jwt_token),
+    conexao=Depends(get_db_connection),
+):
+    cursor = conexao.cursor()
+    # Algumas relações antigas não usam ON DELETE CASCADE. Remova somente os
+    # registros desta conta, na ordem das chaves estrangeiras, em uma transação.
+    # Se qualquer relação inesperada impedir a exclusão, o bloco reverte tudo.
+    try:
+        with conexao:
+            # Serializa exclusões concorrentes para que duas últimas contas
+            # administradoras não consigam passar pela verificação ao mesmo tempo.
+            cursor.execute("BEGIN IMMEDIATE")
+            cursor.execute("SELECT role FROM usuario WHERE id = ?", (usuario_id,))
+            usuario = cursor.fetchone()
+            if not usuario:
+                raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+
+            if usuario[0] == "admin":
+                cursor.execute("SELECT COUNT(*) FROM usuario WHERE role = 'admin'")
+                if cursor.fetchone()[0] <= 1:
+                    raise HTTPException(
+                        status_code=409,
+                        detail=(
+                            "Esta é a última conta administradora. Promova outro usuário "
+                            "a administrador antes de excluir esta conta."
+                        ),
+                    )
+
+            cursor.execute("DELETE FROM transacao WHERE usuario_id = ?", (usuario_id,))
+            cursor.execute("DELETE FROM meta WHERE usuario_id = ?", (usuario_id,))
+            cursor.execute("DELETE FROM orcamento WHERE usuario_id = ?", (usuario_id,))
+            cursor.execute(
+                "DELETE FROM perfil_financeiro WHERE usuario_id = ?", (usuario_id,)
+            )
+            cursor.execute(
+                "DELETE FROM orcamento_grupo WHERE usuario_id = ?", (usuario_id,)
+            )
+            cursor.execute("DELETE FROM categoria WHERE usuario_id = ?", (usuario_id,))
+            cursor.execute("DELETE FROM usuario WHERE id = ?", (usuario_id,))
+    except sqlite3.IntegrityError:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Há dados vinculados que impediram a exclusão completa. "
+                "Nenhuma alteração foi aplicada. Entre em contato com o suporte."
+            ),
+        )
+
+    return {"message": "A conta e os dados associados foram excluídos."}
+
+
 @router.post("/usuarios/recuperar-senha")
 def solicitar_recuperacao(dados: SolicitarRecuperacao, conexao=Depends(get_db_connection)):
     if not _smtp_pronto():
