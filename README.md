@@ -96,9 +96,9 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 Cole o resultado em `JWT_SECRET_KEY` no `.env`. No PowerShell, use o mesmo comando depois de ativar o ambiente virtual.
 
-Para o cadastro por email e senha, preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` e `SMTP_FROM` com as credenciais de um serviço de envio de email. Para testar login Google, preencha `GOOGLE_CLIENT_ID` com o client ID de servidor correspondente ao configurado em `frontend/lib/config/google_config.dart`. Se o projeto OAuth estiver em modo de teste, a conta Google usada no teste precisa estar autorizada nele.
+Para enviar o código de confirmação ao tentar entrar em uma conta criada por email e senha, preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` e `SMTP_FROM` com as credenciais de um serviço de envio de email. Para testar login Google, preencha `GOOGLE_CLIENT_ID` com o client ID de servidor correspondente ao configurado em `frontend/lib/config/google_config.dart`. Se o projeto OAuth estiver em modo de teste, a conta Google usada no teste precisa estar autorizada nele.
 
-Essas credenciais não são fornecidas no código-fonte. Se você não tiver suas próprias configurações, solicite ao responsável pelo projeto as credenciais ou instruções de teste. Sem SMTP, o servidor inicia, mas o cadastro que exige código de confirmação não termina. Sem OAuth, o login Google não funciona. Não compartilhe o arquivo `.env`.
+Essas credenciais não são fornecidas no código-fonte. Se você não tiver suas próprias configurações, solicite ao responsável pelo projeto as credenciais ou instruções de teste. Sem SMTP, o servidor inicia e o cadastro é criado normalmente, mas não será possível enviar o código solicitado ao tentar entrar em uma conta ainda não confirmada. Sem OAuth, o login Google não funciona. Não compartilhe o arquivo `.env`.
 
 O backend carrega `backend/.env` automaticamente. Não é preciso executar `source .env`.
 
@@ -145,7 +145,7 @@ O banco `financas.db` não precisa vir com o pacote. Se não existir, a API o cr
 
 - **A API não inicia:** confirme que `JWT_SECRET_KEY` foi preenchida e que o ambiente virtual está ativado.
 - **O app informa que não consegue conectar:** confirme que a API está rodando, revise `api_config.dart` e verifique o Firewall.
-- **O cadastro não envia o código:** confira as configurações SMTP e os logs do terminal da API.
+- **O código de confirmação não chega ao tentar entrar:** confira as configurações SMTP e os logs do terminal da API.
 - **O login Google falha:** confira o client ID do servidor, o client ID configurado no Flutter e se a conta está autorizada como usuária de teste no Google Cloud.
 - **`flutter` não é reconhecido:** confirme que `flutter/bin` foi adicionado ao `Path` e reabra o terminal.
 

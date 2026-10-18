@@ -88,12 +88,9 @@ def criar_usuario(dados_usuario: CadastroUsuario, conexao=Depends(get_db_connect
         if not existente[1]:
             raise HTTPException(
                 status_code=409,
-                detail="Este cadastro já está aguardando confirmação. Entre com esse e-mail para reenviar o código.",
+                detail="Este cadastro já está aguardando confirmação. Entre com esse e-mail e senha para receber um código.",
             )
         raise HTTPException(status_code=400, detail="Este e-mail já está cadastrado.")
-
-    if not _smtp_pronto():
-        raise HTTPException(status_code=503, detail="SMTP incompleto: configure SMTP_PASSWORD com a senha de app antes de cadastrar.")
 
     try:
         cursor.execute(
@@ -109,7 +106,6 @@ def criar_usuario(dados_usuario: CadastroUsuario, conexao=Depends(get_db_connect
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=400, detail="Email já cadastrado.")
 
-    _enviar_confirmacao_email(conexao, novo_id, email)
     return {"id": novo_id, "nome": dados_usuario.nome.strip(), "email": email}
 
 
